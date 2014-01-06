@@ -59,7 +59,7 @@
         <table class="wp-lsit-table widefat fixed">
             <thead>
                 <tr>
-                    <th scope="col" style=""><?php _e( 'Line', 'string-locator-plugin' ); ?></th>
+                    <th scope="col" style="width: 3.2em;"><?php _e( 'Line', 'string-locator-plugin' ); ?></th>
                     <th scope="col" style=""><?php _e( 'File', 'string-locator-plugin' ); ?></th>
                     <th scope="col" style=""><?php _e( 'String', 'string-locator-plugin' ); ?></th>
                 </tr>
@@ -77,6 +77,9 @@
             <?php
                 $found = false;
                 $path = ABSPATH . 'wp-content/';
+
+                $theme = false;
+                $plugin = false;
 
                 /**
                  * Check what we are search through, a theme or a plugin
@@ -106,7 +109,7 @@
                     $linenum = 0;
 
                     /**
-                     * If it's a directory, skip this runthrough, we can't read a directory line by line
+                     * If it's a directory, skip this run through, we can't read a directory line by line
                      */
                     if ( is_dir( $location->getPathname() ) )
                         continue;
@@ -125,11 +128,23 @@
                              */
                             if ( stristr( $readline, $_POST['string-locator-string'] ) )
                             {
+                                $editurl = "";
+                                if ( $theme ) {
+                                    $editurl = admin_url( 'theme-editor.php?file=' . $location->getFilename() . '&theme=' . $theme . '&string-locator-line=' . $linenum . '&string-locator-search=' . urlencode( $_POST['string-locator-string'] ) );
+                                }
+                                else {
+                                    $editurl = admin_url( 'plugin-editor.php?file=' . urlencode( $plugin[0] . '/' . $location->getFilename() ) . '&plugin=' . $plugin[0] . '&string-locator-line=' . $linenum . '&string-locator-search=' . urlencode( $_POST['string-locator-string'] ) );
+                                }
+
                                 $found = true;
                                 echo '
                                     <tr>
                                         <td>' . $linenum . '</td>
-                                        <td>' . $relativepath . '/' . $location->getFilename() . '</td>
+                                        <td>
+                                            <a href="' . $editurl . '">
+                                                ' . $relativepath . '/' . $location->getFilename() . '
+                                            </a>
+                                        </td>
                                         <td>' . str_ireplace( $_POST['string-locator-string'], '<strong>' . $_POST['string-locator-string'] . '</strong>', htmlentities( $readline ) ) . '</td>
                                     </tr>
                                 ';

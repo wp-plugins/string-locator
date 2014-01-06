@@ -3,7 +3,7 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.mrstk.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Clorith
  * Author URI: http://www.mrstk.net
  * License: GPL2
@@ -32,6 +32,7 @@ class string_locator
     function __construct()
     {
         add_action( 'admin_menu', array( $this, 'populate_menu' ) );
+        add_action( 'admin_notices', array( $this, 'admin_notice' ) );
     }
 
     /**
@@ -49,6 +50,34 @@ class string_locator
         add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
     }
 
+    /**
+     * Add notice to the top of pages in the admin screen
+     */
+    function admin_notice()
+    {
+        /**
+         * Make sure we only add our notification if it's a page referenced by the plugin
+         */
+        if ( isset( $_GET['string-locator-line'] ) ) {
+            ?>
+                <div class="updated">
+                    <h3>
+                        String Locator
+                    </h3>
+                    <p>
+                        <?php printf( __( 'You recently searched for <strong>%s</strong> which was located on line <strong>%d</strong>.', 'string-locator-plugin' ), urldecode( $_GET['string-locator-search'] ), $_GET['string-locator-line'] ); ?>
+                    </p>
+                    <p>
+                        <?php _e( 'You can easily locate the line in the text editor by using your browsers search function (CTRL+F / CMD+F).', 'string-locator-plugin' ); ?>
+                    </p>
+                </div>
+            <?php
+        }
+    }
+
+    /**
+     * Function for including the actual plugin Admin UI page
+     */
     function options_page()
     {
         include_once( dirname( __FILE__ ) . '/options.php' );
