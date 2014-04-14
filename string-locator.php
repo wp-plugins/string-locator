@@ -3,9 +3,10 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.mrstk.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: Clorith
  * Author URI: http://www.mrstk.net
+ * Text Domain: string-locator-plugin
  * License: GPL2
  *
  * Copyright 2013 Marius Jensen (email : marius@jits.no)
@@ -33,7 +34,17 @@ class string_locator
     {
         add_action( 'admin_menu', array( $this, 'populate_menu' ) );
         add_action( 'admin_notices', array( $this, 'admin_notice' ) );
+
+		add_action( 'plugins_loaded', array( $this, 'load_i18n' ) );
     }
+
+	/**
+	 * Set the text domain for translated plugin content
+	 */
+	function load_i18n() {
+		$i18n_dir = 'string-locator/languages/';
+		load_plugin_textdomain( 'string-locator-plugin', false, $i18n_dir );
+	}
 
     /**
      * Add our plugin to the 'Tools' menu

@@ -6,7 +6,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: theme, plugin, text, search, find, editor
 Requires at least: 3.6
 Tested up to: 3.8
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,6 +18,11 @@ When working on themes and plugins you often notice a piece of text that appears
 
 Easily search through your themes or plugins and be presented with a list of files, the matched text and what line of the file matched your search.
 You can then quickly make edits to the file using the built in editor in WordPress by clicking the quick access links included with the search results.
+
+** Translations**
+
+српски (Serbian) - Ognjen Djuraskovic
+Español (Spanish) - Ognjen Djuraskovic
 
 == Installation ==
 
@@ -34,6 +39,10 @@ You can then quickly make edits to the file using the built in editor in WordPre
 
 == Changelog ==
 
+= 1.1.1 =
+* Added Spanish translation files added
+* Added Serbian translation files added
+
 = 1.1.0 =
 * Added link to the online editor for themes/plugins from search results
 * Added extra notification text on editor page when referenced by the plugin, makes it easier to find your search string
@@ -45,3 +54,5 @@ You can then quickly make edits to the file using the built in editor in WordPre
 * Initial release
 
 == Upgrade notice ==
+
+Adds translation support for Spanish and Serbian
