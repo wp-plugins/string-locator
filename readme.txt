@@ -5,7 +5,7 @@ Plugin URI: http://www.mrstk.net/wordpress-string-locator/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6ARR8GWYHBVPN
 Tags: theme, plugin, text, search, find, editor
 Requires at least: 3.6
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,7 @@ You can then quickly make edits to the file using the built in editor in WordPre
 ** Translations**
 
 српски (Serbian) - Ognjen Djuraskovic
+
 Español (Spanish) - Ognjen Djuraskovic
 
 == Installation ==
