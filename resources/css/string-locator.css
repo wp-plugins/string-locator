@@ -1,0 +1,33 @@
+.wrap > h2 {
+	margin-bottom: 15px;
+}
+.string-locator-edit-wrap {
+	box-sizing: border-box;
+	display: inline-block;
+	margin-right: 3%;
+	vertical-align: top;
+	width: 70%;
+}
+
+.string-locator-sidebar-wrap {
+	box-sizing: border-box;
+	display: inline-block;
+	position: fixed;
+	vertical-align: top;
+	width: 25%;
+}
+.string-locator-theme-details {
+	background-color: #fff;
+	box-sizing: border-box;
+	height: auto;
+	padding: 15px;
+	width: 100%;
+}
+.string-locator-theme-details h2 small {
+	font-size: 50%;
+}
+
+.string-locator-actions {
+	display: inline-block;
+	width: 100%;
+}
