@@ -8,13 +8,13 @@
 		$themedata = wp_get_theme( $_GET['file-reference'] );
 
 		$details = array(
-			'name'       => $themedata->get( 'Name' ),
-			'version'    => $themedata->get( 'Version' ),
-			'author'     => array(
-				'uri'    => $themedata->get( 'AuthorURI' ),
-				'name'   => $themedata->get( 'Author' )
+			'name'        => $themedata->get( 'Name' ),
+			'version'     => $themedata->get( 'Version' ),
+			'author'      => array(
+				'uri'     => $themedata->get( 'AuthorURI' ),
+				'name'    => $themedata->get( 'Author' )
 			),
-			'desciption' => $themedata->get( 'Description' )
+			'description' => $themedata->get( 'Description' )
 		);
 	}
 	else {
