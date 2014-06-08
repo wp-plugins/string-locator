@@ -3,7 +3,7 @@ Contributors: Clorith
 Author URI: http://www.clorith.net
 Plugin URI: http://wordpress.org/plugins/string-locator/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6ARR8GWYHBVPN
-Tags: theme, plugin, text, search, find, editor
+Tags: theme, plugin, text, search, find, editor, syntax, highlight
 Requires at least: 3.6
 Tested up to: 3.9.1
 Stable tag: 1.2.0
@@ -35,6 +35,11 @@ Español (Spanish) - Ognjen Djuraskovic
 3. You will find the String Locator option under then `Tools` menu
 
 == Frequently asked questions ==
+
+= Will Smart-Scan guarantee my site is safe when making edits? =
+Although it will do it's best at detecting incorrect usage of the commonly used symbols (parenthesis, brackets and braces), there is no guarantee every possible error is detected. The best safe guard is to keep consistent backups of your site (even when not making edits).
+
+
 
 == Screenshots ==
 
