@@ -6,17 +6,12 @@ if ( theEditor != null ) {
 
 	function resizeEditor( editor ) {
 		var setEditorSize  = ( Math.max( document.documentElement.clientHeight, window.innerHeight || 0 ) - 177 );
-
-
 		editor.setSize( null, parseInt( setEditorSize ) );
 	}
 
 	var editor = CodeMirror.fromTextArea( document.getElementById( 'code-editor' ), {
 		lineNumbers: true,
-		mode: {
-			name            : editorLanguage,
-			globalVars      : true
-		},
+		mode: editorLanguage,
 		styleActiveLine : true,
 		matchBrackets   : true,
 		indentWithTabs  : true,
