@@ -35,7 +35,7 @@ class string_locator
 	 * @var string $plugin_url The URL to the plugins directory
 	 */
 	public  $string_locator_language = '';
-	public  $version                 = '0.0.1';
+	public  $version                 = '1.2.0';
 	public  $notice                  = array();
 	public  $failed_edit             = false;
 	private $plugin_url              = '';
@@ -302,9 +302,9 @@ class string_locator
 				}
 
 				$file = fopen( $path, "w" );
-				$lines = explode( "\n", $content );
+				$lines = explode( "\n", str_replace( array( "\r\n", "\r" ), "\n", $content ) );
 				for ( $i = 0; $i < count( $lines ); $i++ ) {
-					fwrite( $file, $lines[$i] );
+					fwrite( $file, $lines[$i] . PHP_EOL );
 				}
 				fclose( $file );
 				$this->notice[] = array(
