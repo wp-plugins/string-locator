@@ -2,7 +2,40 @@
 	global $string_locator;
 	$editor_content = "";
 	$file = $_GET['string-locator-path'];
-	$themedata = wp_get_theme( $_GET['theme'] );
+	$details = array();
+
+	if ( $_GET['file-type'] == 'theme' ) {
+		$themedata = wp_get_theme( $_GET['file-reference'] );
+
+		$details = array(
+			'name'       => $themedata->get( 'Name' ),
+			'version'    => $themedata->get( 'Version' ),
+			'author'     => array(
+				'uri'    => $themedata->get( 'AuthorURI' ),
+				'name'   => $themedata->get( 'Author' )
+			),
+			'desciption' => $themedata->get( 'Description' )
+		);
+	}
+	else {
+		$plugins = get_plugins();
+
+		foreach( $plugins AS $pluginname => $plugindata ) {
+			$pluginref = explode( '/', $pluginname );
+
+			if ( $pluginref[0] == $_GET['file-reference'] ) {
+				$details = array(
+					'name'        => $plugindata['Name'],
+					'version'     => $plugindata['Version'],
+					'author'      => array(
+						'uri'     => $plugindata['AuthorURI'],
+						'name'    => $plugindata['Author']
+					),
+					'description' => $plugindata['Description']
+				);
+			}
+		}
+	}
 
 	if ( ! $string_locator->failed_edit ) {
 		$readfile = fopen( $file, "r" );
@@ -25,21 +58,22 @@
 
 	<form action="" id="string-locator-edit-form" method="post">
 		<div class="string-locator-edit-wrap">
-			<textarea name="string-locator-editor-content" class="string-locator-editor" id="code-editor" data-editor-goto-line="<?php echo $_GET['string-locator-line']; ?>" data-editor-language="<?php echo $string_locator->string_locator_language; ?>" autofocus="autofocus"><?php echo $editor_content; ?></textarea>
+			<textarea name="string-locator-editor-content" class="string-locator-editor" id="code-editor" data-editor-goto-line="<?php echo $_GET['string-locator-line']; ?>" data-editor-language="<?php echo $string_locator->string_locator_language; ?>" autofocus="autofocus"><?php echo esc_html( $editor_content ); ?></textarea>
 		</div>
 
 		<div class="string-locator-sidebar-wrap">
 			<div class="string-locator-theme-details">
-				<h2><?php echo $themedata->get( 'Name' ); ?> <small>v. <?php echo $themedata->get( 'Version' ); ?></small></h2>
+				<h2><?php echo $details['name']; ?> <small>v. <?php echo $details['version']; ?></small></h2>
 				<p>
-					By <a href="<?php echo $themedata->get( 'AuthorURI' ); ?>" target="_blank"><?php echo $themedata->get( 'Author' ); ?></a>
+					By <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
 				</p>
 				<p>
-					<?php echo $themedata->get( 'Description' ); ?>
+					<?php echo $details['description'] ?>
 				</p>
 			</div>
 
 			<div class="string-locator-actions">
+				<?php wp_nonce_field( 'string-locator-edit_' . $_GET['edit-file'] ); ?>
 				<p>
 					<label>
 						<input type="checkbox" name="string-locator-smart-edit" checked="checked">
