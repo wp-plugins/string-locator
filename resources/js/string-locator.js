@@ -23,3 +23,12 @@ if ( theEditor != null ) {
 	editor.setCursor( parseInt( editLine - 1 ), 0 );
 	resizeEditor( editor );
 }
+
+var gotoClick = document.getElementsByClassName( 'string-locator-edit-goto' );
+for( var i = 0; i < gotoClick.length; i++ ) {
+	var click = gotoClick[i];
+	click.onclick = function() {
+		editor.scrollIntoView( parseInt( this.getAttribute( 'data-gogo-line' ) ) );
+		editor.setCursor( parseInt( this.getAttribute( 'data-gogo-line' ) - 1 ), 0 );
+	}
+}
