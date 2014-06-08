@@ -56,7 +56,7 @@
     ?>
 
     <form action="" method="post">
-        <table class="wp-lsit-table widefat fixed">
+        <table class="wp-list-table widefat fixed">
             <thead>
                 <tr>
                     <th scope="col" style="width: 3.2em;"><?php _e( 'Line', 'string-locator-plugin' ); ?></th>
@@ -94,8 +94,6 @@
                     $path .= 'plugins/' . $plugin[0];
                 }
 
-                $relativepath = str_replace( ABSPATH, '', $path );
-
                 /**
                  * We use the PHP Iterator class to recursively check for files
                  */
@@ -111,8 +109,9 @@
                     /**
                      * If it's a directory, skip this run through, we can't read a directory line by line
                      */
-                    if ( is_dir( $location->getPathname() ) )
+                    if ( is_dir( $location->getPathname() ) ) {
                         continue;
+					}
 
                     /**
                      * Start reading the file
@@ -128,22 +127,23 @@
                              */
                             if ( stristr( $readline, $_POST['string-locator-string'] ) )
                             {
-                                $editurl = "";
-                                if ( $theme ) {
-                                    $editurl = admin_url( 'theme-editor.php?file=' . $location->getFilename() . '&theme=' . $theme . '&string-locator-line=' . $linenum . '&string-locator-search=' . urlencode( $_POST['string-locator-string'] ) );
-                                }
-                                else {
-                                    $editurl = admin_url( 'plugin-editor.php?file=' . urlencode( $plugin[0] . '/' . $location->getFilename() ) . '&plugin=' . $plugin[0] . '&string-locator-line=' . $linenum . '&string-locator-search=' . urlencode( $_POST['string-locator-string'] ) );
-                                }
+								/**
+								 * Prepare the visual path for the end user
+								 * Removes path leading up to WordPress root and ensures consistent directory separators
+								 */
+								$relativepath = str_replace( array( ABSPATH, '/' ), array( '', DIRECTORY_SEPARATOR ), $location->getPathname() );
+
+								/**
+								 * Create the URL to take the user to the editor
+								 */
+								$editurl = admin_url( 'tools.php?page=string-locator&file-type=' . ( $theme ? 'theme' : 'plugin' ) . '&file-reference=' . urlencode( ( $theme ? $theme : $plugin[0] ) ) . '&edit-file=' . $location->getFilename() . '&string-locator-line=' . $linenum . '&string-locator-path=' . urlencode( $location->getPathname() ) );
 
                                 $found = true;
                                 echo '
                                     <tr>
                                         <td>' . $linenum . '</td>
                                         <td>
-                                            <a href="' . $editurl . '">
-                                                ' . $relativepath . '/' . $location->getFilename() . '
-                                            </a>
+                                            <a href="' . $editurl . '">' . $relativepath . '</a>
                                         </td>
                                         <td>' . str_ireplace( $_POST['string-locator-string'], '<strong>' . $_POST['string-locator-string'] . '</strong>', htmlentities( $readline ) ) . '</td>
                                     </tr>
@@ -168,7 +168,7 @@
                 }
 
                 /**
-                 * Give the user feedback if the string wasn't found anywhere
+                 * Give the user feedback if the string was not found anywhere
                  */
                 if ( ! $found )
                     echo '
