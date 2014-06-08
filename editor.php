@@ -56,7 +56,7 @@
 		<?php _e( 'String Locator - Code Editor', 'string-locator-plugin' ); ?>
 	</h2>
 
-	<form action="" id="string-locator-edit-form" method="post">
+	<form action="<?php echo ( is_ssl() ? 'http://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" id="string-locator-edit-form" method="post">
 		<div class="string-locator-edit-wrap">
 			<textarea name="string-locator-editor-content" class="string-locator-editor" id="code-editor" data-editor-goto-line="<?php echo $_GET['string-locator-line']; ?>" data-editor-language="<?php echo $string_locator->string_locator_language; ?>" autofocus="autofocus"><?php echo esc_html( $editor_content ); ?></textarea>
 		</div>
