@@ -189,6 +189,13 @@ class string_locator
     function options_page()
     {
 		/**
+		 * Don't load anything if the user can't edit themes any way
+		 */
+		if ( ! current_user_can( 'edit_themes' ) ) {
+			return false;
+		}
+
+		/**
 		 * Show the edit page if;
 		 * - The edit file path query var is set
 		 * - The edit file path query var isn't empty
@@ -229,7 +236,7 @@ class string_locator
 	 * Also runs over the Smart-Scan if enabled
 	 */
 	function editor_save() {
-		if ( isset( $_POST['string-locator-editor-content'] ) && check_admin_referer( 'string-locator-edit_' . $_GET['edit-file'] ) ) {
+		if ( isset( $_POST['string-locator-editor-content'] ) && check_admin_referer( 'string-locator-edit_' . $_GET['edit-file'] ) && current_user_can( 'edit_themes' ) ) {
 
 			if ( $this->is_valid_location( $_GET['string-locator-path'] ) ) {
 				$path = urldecode( $_GET['string-locator-path'] );
