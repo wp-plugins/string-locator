@@ -65,7 +65,7 @@
 			<div class="string-locator-theme-details">
 				<h2><?php echo $details['name']; ?> <small>v. <?php echo $details['version']; ?></small></h2>
 				<p>
-					By <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
+					<?php _e( 'By', 'string-locator-plugin' ); ?> <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
 				</p>
 				<p>
 					<?php echo $details['description'] ?>
@@ -77,7 +77,7 @@
 				<p>
 					<label>
 						<input type="checkbox" name="string-locator-smart-edit" checked="checked">
-						Enable a smart-scan of your code to help detect bracket mismatches before saving.
+						<?php _e( 'Enable a smart-scan of your code to help detect bracket mismatches before saving.', 'string-locator-plugin' ); ?>
 					</label>
 				</p>
 

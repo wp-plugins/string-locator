@@ -241,7 +241,7 @@ class string_locator
 				if ( ! is_writeable( $path ) ) {
 					$this->notice[] = array(
 						'type'    => 'error',
-						'message' => 'The file could not be written to, please check file permissions or edit it manually.'
+						'message' => __( 'The file could not be written to, please check file permissions or edit it manually.', 'string-locator-plugin' )
 					);
 					$this->failed_edit = true;
 					return;
@@ -261,7 +261,7 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => 'There is an inconsistency in the opening and closing braces, { and }, of your file on line <a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>'
+								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, { and }, of your file on line %s', 'string-locator-plugin' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
 							);
 						}
 					}
@@ -276,7 +276,7 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => 'There is an inconsistency in the opening and closing braces, [ and ], of your file on line <a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>'
+								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, [ and ], of your file on line %s', 'string-locator-plugin' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
 							);
 						}
 					}
@@ -291,7 +291,7 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => 'There is an inconsistency in the opening and closing braces, ( and ), of your file on line <a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>'
+								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, ( and ), of your file on line %s', 'string-locator-plugin' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
 							);
 						}
 					}
@@ -309,7 +309,7 @@ class string_locator
 				fclose( $file );
 				$this->notice[] = array(
 					'type'    => 'updated',
-					'message' => 'The file has been saved'
+					'message' => __( 'The file has been saved', 'string-locator-plugin' )
 				);
 			}
 		}
