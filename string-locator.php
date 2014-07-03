@@ -175,7 +175,7 @@ class string_locator
     {
         $page_title  = __( 'String Locator', 'string-locator-plugin' );
         $menu_title  = __( 'String Locator', 'string-locator-plugin' );
-        $capability  = 'edit_files';
+        $capability  = 'edit_themes';
         $parent_slug = 'tools.php';
         $menu_slug   = 'string-locator';
         $function    = array( $this, 'options_page' );
