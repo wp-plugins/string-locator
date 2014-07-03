@@ -6,7 +6,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: theme, plugin, text, search, find, editor, syntax, highlight
 Requires at least: 3.6
 Tested up to: 3.9.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 
 == Changelog ==
 
+= 1.2.1 =
+* Added missing i18n text strings
+* Added capability checks for edit screens
+
 = 1.2.0 =
 * Added custom code editor
 * Syntax highlighting
@@ -73,4 +77,4 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 
 == Upgrade notice ==
 
-Adds translation support for Spanish and Serbian
+Fixes missing translateable strings and adds extra security checks to the edit functions

@@ -3,7 +3,7 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.mrstk.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Clorith
  * Author URI: http://www.mrstk.net
  * Text Domain: string-locator-plugin
@@ -35,7 +35,7 @@ class string_locator
 	 * @var string $plugin_url The URL to the plugins directory
 	 */
 	public  $string_locator_language = '';
-	public  $version                 = '1.2.0';
+	public  $version                 = '1.2.1';
 	public  $notice                  = array();
 	public  $failed_edit             = false;
 	private $plugin_url              = '';
