@@ -84,4 +84,4 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 
 == Upgrade notice ==
 
-Fixes missing translateable strings and adds extra security checks to the edit functions
+Extended the search functionality
