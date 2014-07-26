@@ -14,7 +14,7 @@
         <label for="string-locator-search"><?php _e( 'Search through', 'string-locator-plugin' ); ?></label>
         <select name="string-locator-search" id="string-locator-search">
             <optgroup label="<?php _e( 'Themes', 'string-locator-plugin' ); ?>">
-	            <option value="-">&mdash; <?php _e( 'All themes', 'string-locator-plugin' ); ?> &mdash;</option>
+	            <option value="t--"<?php echo ( isset( $_POST['string-locator-search'] ) && 't--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All themes', 'string-locator-plugin' ); ?> &mdash;</option>
                 <?php
                     /**
                      * Loop through themes for our dropdown list
@@ -30,7 +30,7 @@
                 ?>
             </optgroup>
             <optgroup label="<?php _e( 'Plugins', 'string-locator-plugin' ); ?>">
-	            <option value="p--">&mdash; <?php _e( 'All plugins', 'string-locator-plugin' ); ?> &mdash;</option>
+	            <option value="p--"<?php echo ( isset( $_POST['string-locator-search'] ) && 'p--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All plugins', 'string-locator-plugin' ); ?> &mdash;</option>
                 <?php
                     /**
                      * Loop through plugins for our dropdown list
@@ -80,93 +80,86 @@
                 $found = false;
                 $path = ABSPATH . 'wp-content/';
 
+                global $string_locator;
+
                 $theme = false;
                 $plugin = false;
 
-                /**
-                 * Check what we are search through, a theme or a plugin
-                 */
-                if ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' )
-                {
-                    $theme = substr( $_POST['string-locator-search'], 2 );
-                    $path .= 'themes/' . $theme;
+                if ( 3 == strlen( $_POST['string-locator-search'] ) && '-' == substr( $_POST['string-locator-search'], 2, 1 ) ) {
+	                /**
+	                 * We are doing a search of all themes or plugins
+	                 */
+	                if ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
+		                $path .= 'themes/';
+
+		                foreach( $string_locate_themes AS $string_locate_theme_slug => $string_locate_theme )
+		                {
+			                $locate = $string_locator->scan_path( $path . $string_locate_theme_slug, $_POST['string-locator-string'], 'theme', $string_locate_theme_slug );
+
+			                if ( $locate ) {
+				                $found = true;
+
+				                echo '
+				                    <tr>
+				                    	<td colspan="3">
+				                    		<strong>
+				                    			' . ucfirst( $string_locate_theme ) . '
+			                                </strong>
+				                    	</td>
+			                        </tr>
+				                ';
+
+				                echo $locate;
+			                }
+		                }
+	                }
+	                else {
+		                $path .= 'plugins/';
+
+		                foreach( $string_locate_plugins AS $string_locate_plugin_path => $string_locate_plugin )
+		                {
+			                $plugin = explode( '/', $string_locate_plugin_path );
+
+			                $locate = $string_locator->scan_path( $path . $plugin[0], $_POST['string-locator-string'], 'plugin', $plugin[0] );
+
+			                if ( $locate ) {
+				                $found = true;
+
+				                echo '
+				                    <tr>
+				                    	<td colspan="3">
+				                    		<strong>
+				                    			' . ucfirst( $plugin[0] ) . '
+			                                </strong>
+				                    	</td>
+			                        </tr>
+				                ';
+
+				                echo $locate;
+			                }
+		                }
+	                }
                 }
                 else {
-                    $plugin = explode( '/', substr( $_POST['string-locator-search'], 2 ) );
-                    $path .= 'plugins/' . $plugin[0];
-                }
+	                /**
+	                 * We are searching through an individual item
+	                 */
 
-                /**
-                 * We use the PHP Iterator class to recursively check for files
-                 */
-                $paths = new RecursiveIteratorIterator(
-                    new RecursiveDirectoryIterator( $path ),
-                    RecursiveIteratorIterator::SELF_FIRST
-                );
+	                /**
+	                 * Check what we are search through, a theme or a plugin
+	                 */
+	                if ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
+		                $theme = substr( $_POST['string-locator-search'], 2 );
+		                $path .= 'themes/' . $theme;
+	                } else {
+		                $plugin = explode( '/', substr( $_POST['string-locator-search'], 2 ) );
+		                $path .= 'plugins/' . $plugin[0];
+	                }
 
-                foreach ( $paths AS $name => $location )
-                {
-                    $linenum = 0;
-
-                    /**
-                     * If it's a directory, skip this run through, we can't read a directory line by line
-                     */
-                    if ( is_dir( $location->getPathname() ) ) {
-                        continue;
-					}
-
-                    /**
-                     * Start reading the file
-                     */
-                    $readfile = fopen( $location->getPathname(), "r" );
-                    if ( $readfile )
-                    {
-                        while ( ( $readline = fgets( $readfile ) ) !== false )
-                        {
-                            $linenum++;
-                            /**
-                             * If our string is found in this line, output the line number and other data
-                             */
-                            if ( stristr( $readline, $_POST['string-locator-string'] ) )
-                            {
-								/**
-								 * Prepare the visual path for the end user
-								 * Removes path leading up to WordPress root and ensures consistent directory separators
-								 */
-								$relativepath = str_replace( array( ABSPATH, '/' ), array( '', DIRECTORY_SEPARATOR ), $location->getPathname() );
-
-								/**
-								 * Create the URL to take the user to the editor
-								 */
-								$editurl = admin_url( 'tools.php?page=string-locator&file-type=' . ( $theme ? 'theme' : 'plugin' ) . '&file-reference=' . urlencode( ( $theme ? $theme : $plugin[0] ) ) . '&edit-file=' . $location->getFilename() . '&string-locator-line=' . $linenum . '&string-locator-path=' . urlencode( $location->getPathname() ) );
-
-                                $found = true;
-                                echo '
-                                    <tr>
-                                        <td>' . $linenum . '</td>
-                                        <td>
-                                            <a href="' . $editurl . '">' . $relativepath . '</a>
-                                        </td>
-                                        <td>' . str_ireplace( $_POST['string-locator-string'], '<strong>' . $_POST['string-locator-string'] . '</strong>', htmlentities( $readline ) ) . '</td>
-                                    </tr>
-                                ';
-                            }
-                        }
-                    }
-                    else {
-                        /**
-                         * The file was unreadable, give the user a friendly notification
-                         */
-                        echo '
-                            <tr>
-                                <td colspan="3">
-                                    <strong>
-                                        ' . __( 'Could not read file: ', 'string-locator-plugin' ) . $location->getFilename() . '
-                                    </strong>
-                                </td>
-                            </tr>
-                        ';
-                    }
+	                $found = $string_locator->scan_path( $path, $_POST['string-locator-string'], ( $theme ? 'theme' : 'plugin' ), ( $theme ? $theme : $plugin[0] ) );
+	                if ( $found ) {
+		                echo $found;
+	                }
                 }
 
                 /**
