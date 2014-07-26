@@ -5,8 +5,8 @@ Plugin URI: http://wordpress.org/plugins/string-locator/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6ARR8GWYHBVPN
 Tags: theme, plugin, text, search, find, editor, syntax, highlight
 Requires at least: 3.6
-Tested up to: 3.9.1
-Stable tag: 1.2.1
+Tested up to: 4.0
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,8 @@ This drastically reduces the risk of breaking your site when making edits
 
 Español (Spanish) - Ognjen Djuraskovic
 
+Deutsch (German) - [pixolin](http://profiles.wordpress.org/pixolin/)
+
 == Installation ==
 
 1. Upload the `string-locator` folder to the `/wp-content/plugins/` directory
@@ -48,6 +50,11 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 3. Smart-Scan has detected an inconsistency in the use of braces
 
 == Changelog ==
+
+= 1.3.0 =
+* Added search all for themes and plugins
+* Refactored code
+* Added german translations
 
 = 1.2.1 =
 * Added missing i18n text strings
@@ -77,4 +84,4 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 
 == Upgrade notice ==
 
-Fixes missing translateable strings and adds extra security checks to the edit functions
+Extended the search functionality
