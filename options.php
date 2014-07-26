@@ -14,6 +14,7 @@
         <label for="string-locator-search"><?php _e( 'Search through', 'string-locator-plugin' ); ?></label>
         <select name="string-locator-search" id="string-locator-search">
             <optgroup label="<?php _e( 'Themes', 'string-locator-plugin' ); ?>">
+	            <option value="-">&mdash; <?php _e( 'All themes', 'string-locator-plugin' ); ?> &mdash;</option>
                 <?php
                     /**
                      * Loop through themes for our dropdown list
@@ -29,6 +30,7 @@
                 ?>
             </optgroup>
             <optgroup label="<?php _e( 'Plugins', 'string-locator-plugin' ); ?>">
+	            <option value="p--">&mdash; <?php _e( 'All plugins', 'string-locator-plugin' ); ?> &mdash;</option>
                 <?php
                     /**
                      * Loop through plugins for our dropdown list
