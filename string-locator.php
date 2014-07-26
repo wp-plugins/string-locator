@@ -3,7 +3,7 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.mrstk.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.2.1
+ * Version: 1.3
  * Author: Clorith
  * Author URI: http://www.mrstk.net
  * Text Domain: string-locator-plugin
@@ -335,6 +335,88 @@ class string_locator
 				';
 			}
 		}
+	}
+
+	function scan_path( $path, $string, $type, $slug ) {
+		$output = "";
+
+		/**
+		 * We use the PHP Iterator class to recursively check for files
+		 */
+		$paths = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator( $path ),
+			RecursiveIteratorIterator::SELF_FIRST
+		);
+
+		foreach ( $paths AS $name => $location )
+		{
+			$linenum = 0;
+
+			/**
+			 * If it's a directory, skip this run through, we can't read a directory line by line
+			 */
+			if ( is_dir( $location->getPathname() ) ) {
+				continue;
+			}
+
+			/**
+			 * Start reading the file
+			 */
+			$readfile = fopen( $location->getPathname(), "r" );
+			if ( $readfile )
+			{
+				while ( ( $readline = fgets( $readfile ) ) !== false )
+				{
+					$linenum++;
+					/**
+					 * If our string is found in this line, output the line number and other data
+					 */
+					if ( stristr( $readline, $string ) )
+					{
+						/**
+						 * Prepare the visual path for the end user
+						 * Removes path leading up to WordPress root and ensures consistent directory separators
+						 */
+						$relativepath = str_replace( array( ABSPATH, '/' ), array( '', DIRECTORY_SEPARATOR ), $location->getPathname() );
+
+						/**
+						 * Create the URL to take the user to the editor
+						 */
+						$editurl = admin_url( 'tools.php?page=string-locator&file-type=' . $type . '&file-reference=' . urlencode( $slug ) . '&edit-file=' . $location->getFilename() . '&string-locator-line=' . $linenum . '&string-locator-path=' . urlencode( $location->getPathname() ) );
+
+						$output .=  '
+                            <tr>
+                                <td>' . $linenum . '</td>
+                                <td>
+                                    <a href="' . $editurl . '">' . $relativepath . '</a>
+                                </td>
+                                <td>' . str_ireplace( $string, '<strong>' . $string . '</strong>', htmlentities( $readline ) ) . '</td>
+                            </tr>
+                        ';
+					}
+				}
+			}
+			else {
+				/**
+				 * The file was unreadable, give the user a friendly notification
+				 */
+				$output .= '
+                    <tr>
+                        <td colspan="3">
+                            <strong>
+                                ' . __( 'Could not read file: ', 'string-locator-plugin' ) . $location->getFilename() . '
+                            </strong>
+                        </td>
+                    </tr>
+                ';
+			}
+		}
+
+		if ( ! empty( $output ) ) {
+			return $output;
+		}
+
+		return false;
 	}
 }
 
