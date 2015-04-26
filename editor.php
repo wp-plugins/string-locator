@@ -93,60 +93,77 @@
 						</label>
 					</p>
 
+					<?php if ( ! stristr( $file, 'wp-content' ) ) { ?>
+						<div class="notice notice-warning inline below-h2">
+							<p>
+								<strong>Warning:</strong> You appear to be editing a Core file.
+							</p>
+							<p>
+								Keep in mind that edits to core files will be lost when WordPress is updated.
+							</p>
+						</div>
+					<?php } ?>
+
 					<p class="submit">
 						<input type="submit" name="submit" class="button button-primary" value="<?php _e( 'Save changes', 'string-locator' ); ?>">
 					</p>
 				</div>
 			</div>
 
+			<?php
+			$function_info = get_defined_functions();
+			$function_help = '';
+
+			foreach( $function_info['user'] AS $user_func ) {
+				if ( strstr( $editor_content, $user_func . '(' ) ) {
+					$function_object = new ReflectionFunction( $user_func );
+					$attrs = $function_object->getParameters();
+
+					$attr_strings = array();
+
+					foreach( $attrs AS $attr ) {
+						$arg = '';
+
+						if ( $attr->isPassedByReference() ) {
+							$arg .= '&';
+						}
+
+						if ( $attr->isOptional() ) {
+							$arg = sprintf(
+								'[ %s$%s ]',
+								$arg,
+								$attr->getName()
+							);
+						} else {
+							$arg = sprintf(
+								'%s$%s',
+								$arg,
+								$attr->getName()
+							);
+						}
+
+						$attr_strings[] = $arg;
+					}
+
+					$function_help .= sprintf(
+						'<p><a href="%s" target="_blank">%s</a></p>',
+						esc_url( sprintf( 'https://developer.wordpress.org/reference/functions/%s/', $user_func ) ),
+						$user_func . '( ' . implode( ', ', $attr_strings ) . ' )'
+					);
+				}
+			}
+			?>
+
+			<?php if ( ! empty( $function_help ) ) { ?>
 			<div class="string-locator-details">
+
 				<div class="string-locator-theme-details">
 					<h2><?php _e( 'WordPress Functions', 'string-locator' ); ?></h2>
 
-					<?php
-						$function_info = get_defined_functions();
-
-						foreach( $function_info['user'] AS $user_func ) {
-							if ( strstr( $editor_content, $user_func ) ) {
-								$function_object = new ReflectionFunction( $user_func );
-								$attrs = $function_object->getParameters();
-
-								$attr_strings = array();
-
-								foreach( $attrs AS $attr ) {
-									$arg = '';
-
-									if ( $attr->isPassedByReference() ) {
-										$arg .= '&';
-									}
-
-									if ( $attr->isOptional() ) {
-										$arg = sprintf(
-											'[ %s$%s ]',
-											$arg,
-											$attr->getName()
-										);
-									} else {
-										$arg = sprintf(
-											'%s$%s',
-											$arg,
-											$attr->getName()
-										);
-									}
-
-									$attr_strings[] = $arg;
-								}
-
-								printf(
-									'<p><a href="%s" target="_blank">%s</a></p>',
-									esc_url( sprintf( 'https://developer.wordpress.org/reference/functions/%s/', $user_func ) ),
-									$user_func . '( ' . implode( ', ', $attr_strings ) . ' )'
-								);
-							}
-						}
-					?>
+					<?php echo $function_help; ?>
 				</div>
 			</div>
+			<?php }?>
 		</div>
 	</form>
 </div>
