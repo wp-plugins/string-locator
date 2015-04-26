@@ -11,13 +11,20 @@
 }
 
 .string-locator-sidebar-wrap {
+	display: inline-block;
+	vertical-align: top;
+	width: 25%;
+}
+.string-locator-details {
 	background: #fff;
 	border: 1px solid #e5e5e5;
 	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.04 );
 	box-sizing: border-box;
-	display: inline-block;
-	vertical-align: top;
-	width: 25%;
+	display: block;
+	margin-top: 2em;
+}
+.string-locator-sidebar-wrap > div:first-of-type {
+	margin-top: 0;
 }
 .string-locator-theme-details {
 	box-sizing: border-box;

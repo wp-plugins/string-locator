@@ -62,28 +62,79 @@
 		</div>
 
 		<div class="string-locator-sidebar-wrap">
-			<div class="string-locator-theme-details">
-				<h2><?php echo $details['name']; ?> <small>v. <?php echo $details['version']; ?></small></h2>
-				<p>
-					<?php _e( 'By', 'string-locator-plugin' ); ?> <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
-				</p>
-				<p>
-					<?php echo $details['description'] ?>
-				</p>
+			<div class="string-locator-details">
+				<div class="string-locator-theme-details">
+					<h2><?php echo $details['name']; ?> <small>v. <?php echo $details['version']; ?></small></h2>
+					<p>
+						<?php _e( 'By', 'string-locator-plugin' ); ?> <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
+					</p>
+					<p>
+						<?php echo $details['description'] ?>
+					</p>
+				</div>
+
+				<div class="string-locator-actions">
+					<?php wp_nonce_field( 'string-locator-edit_' . $_GET['edit-file'] ); ?>
+					<p>
+						<label>
+							<input type="checkbox" name="string-locator-smart-edit" checked="checked">
+							<?php _e( 'Enable a smart-scan of your code to help detect bracket mismatches before saving.', 'string-locator-plugin' ); ?>
+						</label>
+					</p>
+
+					<p class="submit">
+						<input type="submit" name="submit" class="button button-primary" value="<?php _e( 'Save changes', 'string-locator-plugin' ); ?>">
+					</p>
+				</div>
 			</div>
 
-			<div class="string-locator-actions">
-				<?php wp_nonce_field( 'string-locator-edit_' . $_GET['edit-file'] ); ?>
-				<p>
-					<label>
-						<input type="checkbox" name="string-locator-smart-edit" checked="checked">
-						<?php _e( 'Enable a smart-scan of your code to help detect bracket mismatches before saving.', 'string-locator-plugin' ); ?>
-					</label>
-				</p>
+			<div class="string-locator-details">
+				<div class="string-locator-theme-details">
+					<h2><?php _e( 'Functions in use', 'string-locator' ); ?></h2>
 
-				<p class="submit">
-					<input type="submit" name="submit" class="button button-primary" value="<?php _e( 'Save changes', 'string-locator-plugin' ); ?>">
-				</p>
+					<?php
+						$function_info = get_defined_functions();
+
+						foreach( $function_info['user'] AS $user_func ) {
+							if ( strstr( $editor_content, $user_func ) ) {
+								$function_object = new ReflectionFunction( $user_func );
+								$attrs = $function_object->getParameters();
+
+								$attr_strings = array();
+
+								foreach( $attrs AS $attr ) {
+									$arg = '';
+
+									if ( $attr->isPassedByReference() ) {
+										$arg .= '&';
+									}
+
+									if ( $attr->isOptional() ) {
+										$arg = sprintf(
+											'[ %s$%s ]',
+											$arg,
+											$attr->getName()
+										);
+									} else {
+										$arg = sprintf(
+											'%s%s',
+											$arg,
+											$attr->getName()
+										);
+									}
+
+									$attr_strings[] = $arg;
+								}
+
+								printf(
+									'<p><a href="%s">%s</a></p>',
+									esc_url( sprintf( 'https://developer.wordpress.org/reference/functions/%s/', $user_func ) ),
+									$user_func . '( ' . implode( ', ', $attr_strings ) . ' )'
+								);
+							}
+						}
+					?>
+				</div>
 			</div>
 		</div>
 	</form>

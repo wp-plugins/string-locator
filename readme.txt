@@ -51,6 +51,9 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 
 == Changelog ==
 
+= 1.4.0 =
+* Added code references for WordPress function calls
+
 = 1.3.0 =
 * Added search all for themes and plugins
 * Refactored code
