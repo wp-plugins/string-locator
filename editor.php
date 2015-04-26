@@ -127,7 +127,7 @@
 								}
 
 								printf(
-									'<p><a href="%s">%s</a></p>',
+									'<p><a href="%s" target="_blank">%s</a></p>',
 									esc_url( sprintf( 'https://developer.wordpress.org/reference/functions/%s/', $user_func ) ),
 									$user_func . '( ' . implode( ', ', $attr_strings ) . ' )'
 								);

@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: String Locator
- * Plugin URI: http://www.mrstk.net/wordpress-string-locator/
+ * Plugin URI: http://www.clorith.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
  * Version: 1.4
  * Author: Clorith
- * Author URI: http://www.mrstk.net
+ * Author URI: http://www.clorith.net
  * Text Domain: string-locator
  * License: GPL2
  *

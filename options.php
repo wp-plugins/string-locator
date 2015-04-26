@@ -13,6 +13,9 @@
     <form action="" method="post">
         <label for="string-locator-search"><?php _e( 'Search through', 'string-locator' ); ?></label>
         <select name="string-locator-search" id="string-locator-search">
+	        <optgroup label="<?php _e( 'Core', 'string-locator' ); ?>">
+		        <option value="core"><?php _e( 'WordPress Core', 'string-locator' ); ?></option>
+	        </optgroup>
             <optgroup label="<?php _e( 'Themes', 'string-locator' ); ?>">
 	            <option value="t--"<?php echo ( isset( $_POST['string-locator-search'] ) && 't--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All themes', 'string-locator' ); ?> &mdash;</option>
                 <?php
@@ -146,17 +149,26 @@
 	                 */
 
 	                /**
-	                 * Check what we are search through, a theme or a plugin
+	                 * Check what we are search through: WordPress core, a theme or a plugin
 	                 */
-	                if ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
+	                if ( 'core' == $_POST['string-locator-search'] ) {
+		                $path = ABSPATH;
+		                $type = 'core';
+		                $slug = '';
+	                }
+	                elseif ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
 		                $theme = substr( $_POST['string-locator-search'], 2 );
 		                $path .= 'themes/' . $theme;
+		                $type = 'theme';
+		                $slug = $theme;
 	                } else {
 		                $plugin = explode( '/', substr( $_POST['string-locator-search'], 2 ) );
 		                $path .= 'plugins/' . $plugin[0];
+		                $type = 'plugin';
+		                $slug = $plugin[0];
 	                }
 
-	                $found = $string_locator->scan_path( $path, $_POST['string-locator-string'], ( $theme ? 'theme' : 'plugin' ), ( $theme ? $theme : $plugin[0] ) );
+	                $found = $string_locator->scan_path( $path, $_POST['string-locator-string'], $type, $slug );
 	                if ( $found ) {
 		                echo $found;
 	                }
