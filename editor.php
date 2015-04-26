@@ -4,7 +4,18 @@
 	$file = $_GET['string-locator-path'];
 	$details = array();
 
-	if ( $_GET['file-type'] == 'theme' ) {
+	if ( 'core' == $_GET['file-type'] ) {
+		$details = array(
+			'name'        => 'WordPress',
+			'version'     => get_bloginfo( 'version' ),
+			'author'      => array(
+				'uri'     => 'https://wordpress.org/',
+				'name'    => 'WordPress'
+			),
+			'description' => 'WordPress is web software you can use to create a beautiful website or blog. We like to say that WordPress is both free and priceless at the same time.'
+		);
+	}
+	elseif ( 'theme' == $_GET['file-type'] ) {
 		$themedata = wp_get_theme( $_GET['file-reference'] );
 
 		$details = array(
