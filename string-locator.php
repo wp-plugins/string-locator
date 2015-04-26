@@ -6,7 +6,7 @@
  * Version: 1.4
  * Author: Clorith
  * Author URI: http://www.mrstk.net
- * Text Domain: string-locator-plugin
+ * Text Domain: string-locator
  * License: GPL2
  *
  * Copyright 2013 Marius Jensen (email : marius@jits.no)
@@ -84,7 +84,7 @@ class string_locator
 	 */
 	function load_i18n() {
 		$i18n_dir = 'string-locator/languages/';
-		load_plugin_textdomain( 'string-locator-plugin', false, $i18n_dir );
+		load_plugin_textdomain( 'string-locator', false, $i18n_dir );
 	}
 
 	/**
@@ -173,8 +173,8 @@ class string_locator
      */
     function populate_menu()
     {
-        $page_title  = __( 'String Locator', 'string-locator-plugin' );
-        $menu_title  = __( 'String Locator', 'string-locator-plugin' );
+        $page_title  = __( 'String Locator', 'string-locator' );
+        $menu_title  = __( 'String Locator', 'string-locator' );
         $capability  = 'edit_themes';
         $parent_slug = 'tools.php';
         $menu_slug   = 'string-locator';
@@ -248,7 +248,7 @@ class string_locator
 				if ( ! is_writeable( $path ) ) {
 					$this->notice[] = array(
 						'type'    => 'error',
-						'message' => __( 'The file could not be written to, please check file permissions or edit it manually.', 'string-locator-plugin' )
+						'message' => __( 'The file could not be written to, please check file permissions or edit it manually.', 'string-locator' )
 					);
 					$this->failed_edit = true;
 					return;
@@ -268,7 +268,7 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, { and }, of your file on line %s', 'string-locator-plugin' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
+								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, { and }, of your file on line %s', 'string-locator' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
 							);
 						}
 					}
@@ -283,7 +283,7 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, [ and ], of your file on line %s', 'string-locator-plugin' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
+								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, [ and ], of your file on line %s', 'string-locator' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
 							);
 						}
 					}
@@ -298,7 +298,7 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, ( and ), of your file on line %s', 'string-locator-plugin' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
+								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, ( and ), of your file on line %s', 'string-locator' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
 							);
 						}
 					}
@@ -316,7 +316,7 @@ class string_locator
 				fclose( $file );
 				$this->notice[] = array(
 					'type'    => 'updated',
-					'message' => __( 'The file has been saved', 'string-locator-plugin' )
+					'message' => __( 'The file has been saved', 'string-locator' )
 				);
 			}
 		}
@@ -404,7 +404,7 @@ class string_locator
                     <tr>
                         <td colspan="3">
                             <strong>
-                                ' . __( 'Could not read file: ', 'string-locator-plugin' ) . $location->getFilename() . '
+                                ' . __( 'Could not read file: ', 'string-locator' ) . $location->getFilename() . '
                             </strong>
                         </td>
                     </tr>

@@ -7,14 +7,14 @@
 ?>
 <div class="wrap">
     <h2>
-        <?php _e( 'String Locator', 'string-locator-plugin' ); ?>
+        <?php _e( 'String Locator', 'string-locator' ); ?>
     </h2>
 
     <form action="" method="post">
-        <label for="string-locator-search"><?php _e( 'Search through', 'string-locator-plugin' ); ?></label>
+        <label for="string-locator-search"><?php _e( 'Search through', 'string-locator' ); ?></label>
         <select name="string-locator-search" id="string-locator-search">
-            <optgroup label="<?php _e( 'Themes', 'string-locator-plugin' ); ?>">
-	            <option value="t--"<?php echo ( isset( $_POST['string-locator-search'] ) && 't--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All themes', 'string-locator-plugin' ); ?> &mdash;</option>
+            <optgroup label="<?php _e( 'Themes', 'string-locator' ); ?>">
+	            <option value="t--"<?php echo ( isset( $_POST['string-locator-search'] ) && 't--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All themes', 'string-locator' ); ?> &mdash;</option>
                 <?php
                     /**
                      * Loop through themes for our dropdown list
@@ -29,8 +29,8 @@
                     }
                 ?>
             </optgroup>
-            <optgroup label="<?php _e( 'Plugins', 'string-locator-plugin' ); ?>">
-	            <option value="p--"<?php echo ( isset( $_POST['string-locator-search'] ) && 'p--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All plugins', 'string-locator-plugin' ); ?> &mdash;</option>
+            <optgroup label="<?php _e( 'Plugins', 'string-locator' ); ?>">
+	            <option value="p--"<?php echo ( isset( $_POST['string-locator-search'] ) && 'p--' == $_POST['string-locator-search'] ? ' selected="selected"' : '' ); ?>>&mdash; <?php _e( 'All plugins', 'string-locator' ); ?> &mdash;</option>
                 <?php
                     /**
                      * Loop through plugins for our dropdown list
@@ -46,10 +46,10 @@
             </optgroup>
         </select>
 
-        <label for="string-locator-string"><?php _e( 'Search string', 'string-locator-plugin' ); ?></label>
+        <label for="string-locator-string"><?php _e( 'Search string', 'string-locator' ); ?></label>
         <input type="text" name="string-locator-string" id="string-locator-string" value="<?php echo ( isset( $_POST['string-locator-string'] ) ? $_POST['string-locator-string'] : '' ); ?>" />
 
-        <?php submit_button( __( 'Search', 'string-locator-plugin' ) ); ?>
+        <?php submit_button( __( 'Search', 'string-locator' ) ); ?>
     </form>
 
     <?php
@@ -61,17 +61,17 @@
         <table class="wp-list-table widefat fixed">
             <thead>
                 <tr>
-                    <th scope="col" style="width: 3.2em;"><?php _e( 'Line', 'string-locator-plugin' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'File', 'string-locator-plugin' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'String', 'string-locator-plugin' ); ?></th>
+                    <th scope="col" style="width: 3.2em;"><?php _e( 'Line', 'string-locator' ); ?></th>
+                    <th scope="col" style=""><?php _e( 'File', 'string-locator' ); ?></th>
+                    <th scope="col" style=""><?php _e( 'String', 'string-locator' ); ?></th>
                 </tr>
             </thead>
 
             <tfoot>
                 <tr>
-                    <th scope="col" style=""><?php _e( 'Line', 'string-locator-plugin' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'File', 'string-locator-plugin' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'String', 'string-locator-plugin' ); ?></th>
+                    <th scope="col" style=""><?php _e( 'Line', 'string-locator' ); ?></th>
+                    <th scope="col" style=""><?php _e( 'File', 'string-locator' ); ?></th>
+                    <th scope="col" style=""><?php _e( 'String', 'string-locator' ); ?></th>
                 </tr>
             </tfoot>
 
@@ -169,7 +169,7 @@
                     echo '
                         <tr>
                             <td colspan="3">
-                                ' . __( 'Your string was not present in any of the available files.', 'string-locator-plugin' ) . '
+                                ' . __( 'Your string was not present in any of the available files.', 'string-locator' ) . '
                             </td>
                         </tr>
                     ';

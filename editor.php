@@ -53,7 +53,7 @@
 ?>
 <div class="wrap">
 	<h2>
-		<?php _e( 'String Locator - Code Editor', 'string-locator-plugin' ); ?>
+		<?php _e( 'String Locator - Code Editor', 'string-locator' ); ?>
 	</h2>
 
 	<form action="<?php echo ( is_ssl() ? 'http://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" id="string-locator-edit-form" method="post">
@@ -66,7 +66,7 @@
 				<div class="string-locator-theme-details">
 					<h2><?php echo $details['name']; ?> <small>v. <?php echo $details['version']; ?></small></h2>
 					<p>
-						<?php _e( 'By', 'string-locator-plugin' ); ?> <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
+						<?php _e( 'By', 'string-locator' ); ?> <a href="<?php echo $details['author']['uri']; ?>" target="_blank"><?php echo $details['author']['name']; ?></a>
 					</p>
 					<p>
 						<?php echo $details['description'] ?>
@@ -78,19 +78,19 @@
 					<p>
 						<label>
 							<input type="checkbox" name="string-locator-smart-edit" checked="checked">
-							<?php _e( 'Enable a smart-scan of your code to help detect bracket mismatches before saving.', 'string-locator-plugin' ); ?>
+							<?php _e( 'Enable a smart-scan of your code to help detect bracket mismatches before saving.', 'string-locator' ); ?>
 						</label>
 					</p>
 
 					<p class="submit">
-						<input type="submit" name="submit" class="button button-primary" value="<?php _e( 'Save changes', 'string-locator-plugin' ); ?>">
+						<input type="submit" name="submit" class="button button-primary" value="<?php _e( 'Save changes', 'string-locator' ); ?>">
 					</p>
 				</div>
 			</div>
 
 			<div class="string-locator-details">
 				<div class="string-locator-theme-details">
-					<h2><?php _e( 'Functions in use', 'string-locator' ); ?></h2>
+					<h2><?php _e( 'WordPress Functions', 'string-locator' ); ?></h2>
 
 					<?php
 						$function_info = get_defined_functions();
@@ -117,7 +117,7 @@
 										);
 									} else {
 										$arg = sprintf(
-											'%s%s',
+											'%s$%s',
 											$arg,
 											$attr->getName()
 										);
