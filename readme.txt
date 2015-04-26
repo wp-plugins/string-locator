@@ -6,7 +6,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: theme, plugin, text, search, find, editor, syntax, highlight
 Requires at least: 3.6
 Tested up to: 4.2
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,11 +16,11 @@ Find and edit code in your themes and plugins
 
 When working on themes and plugins you often notice a piece of text that appears hardcoded into the files, you need to modify it, but you don't know where it's located in the theme files.
 
-Easily search through your themes or plugins and be presented with a list of files, the matched text and what line of the file matched your search.
+Easily search through your themes, plugins or the WordPress core and be presented with a list of files, the matched text and what line of the file matched your search.
 You can then quickly make edits directly in your browser by clicking the link from the search results.
 
 By default a Smart-Scan is enabled when making edits, this will look for inconsistencies with braces, brackets and parenthesis that are often accidentally left.
-This drastically reduces the risk of breaking your site when making edits
+This drastically reduces the risk of breaking your site when making edits, but is not an absolute guarantee.
 
 ** Translations**
 
