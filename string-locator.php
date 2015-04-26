@@ -67,12 +67,17 @@ class string_locator
 	 * @return bool
 	 */
 	function is_valid_location( $path ) {
-		$valid = true;
+		$valid   = true;
+		$path    = str_replace( array( '/' ), array( DIRECTORY_SEPARATOR ), stripslashes( $path ) );
+		$abspath = str_replace( array( '/' ), array( DIRECTORY_SEPARATOR ), ABSPATH );
 
 		if ( empty( $path ) ) {
 			$valid = false;
 		}
 		if ( stristr( $path, '..' ) ) {
+			$valid = false;
+		}
+		if ( ! stristr( $path, $abspath ) ) {
 			$valid = false;
 		}
 
