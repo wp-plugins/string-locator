@@ -3,6 +3,7 @@
 	$editor_content = "";
 	$file = $_GET['string-locator-path'];
 	$details = array();
+	$this_url = admin_url( ( is_multisite() ? 'network/admin.php' : 'tools.php' ) . '?page=string-locator' );
 
 	if ( 'core' == $_GET['file-type'] ) {
 		$details = array(
@@ -65,6 +66,7 @@
 <div class="wrap">
 	<h2>
 		<?php _e( 'String Locator - Code Editor', 'string-locator' ); ?>
+		<a href="<?php echo esc_url( $this_url . '&restore=true' ); ?>" class="button button-primary"><?php _e( 'Return to search results', 'string-locator' ); ?></a>
 	</h2>
 
 	<form action="<?php echo ( is_ssl() ? 'http://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" id="string-locator-edit-form" method="post">

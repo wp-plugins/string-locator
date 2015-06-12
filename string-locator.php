@@ -3,7 +3,7 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.clorith.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.4
+ * Version: 1.5
  * Author: Clorith
  * Author URI: http://www.clorith.net
  * Text Domain: string-locator
@@ -35,10 +35,11 @@ class string_locator
 	 * @var string $plugin_url The URL to the plugins directory
 	 */
 	public  $string_locator_language = '';
-	public  $version                 = '1.4';
+	public  $version                 = '1.5';
 	public  $notice                  = array();
 	public  $failed_edit             = false;
 	private $plugin_url              = '';
+	private $path_to_use             = '';
 
     /**
      * Construct the plugin
@@ -48,9 +49,11 @@ class string_locator
 		/**
 		 * Define class variables requiring expressions
 		 */
-		$this->plugin_url = plugin_dir_url( __FILE__ );
+		$this->plugin_url  = plugin_dir_url( __FILE__ );
+	    $this->path_to_use = ( is_multisite() ? 'network/admin.php' : 'tools.php' );
 
 		add_action( 'admin_menu', array( $this, 'populate_menu' ) );
+	    add_action( 'network_admin_menu', array( $this, 'populate_network_menu' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 11 );
 
@@ -96,7 +99,7 @@ class string_locator
 	 * Load up JavaScript and CSS for our plugin on the appropriate admin pages
 	 */
 	function admin_enqueue_scripts( $hook ) {
-		if ( 'tools_page_string-locator' == $hook && isset( $_GET['edit-file'] ) ) {
+		if ( ( 'tools_page_string-locator' == $hook || 'toplevel_page_string-locator' == $hook ) && isset( $_GET['edit-file'] ) ) {
 			$filename = explode( '.', $_GET['edit-file'] );
 			$filext = end( $filename );
 			switch( $filext ) {
@@ -178,6 +181,9 @@ class string_locator
      */
     function populate_menu()
     {
+	    if ( is_multisite() ) {
+		    return;
+	    }
         $page_title  = __( 'String Locator', 'string-locator' );
         $menu_title  = __( 'String Locator', 'string-locator' );
         $capability  = 'edit_themes';
@@ -185,8 +191,19 @@ class string_locator
         $menu_slug   = 'string-locator';
         $function    = array( $this, 'options_page' );
 
-        add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
+	    add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
     }
+
+	function populate_network_menu()
+	{
+		$page_title  = __( 'String Locator', 'string-locator' );
+		$menu_title  = __( 'String Locator', 'string-locator' );
+		$capability  = 'edit_themes';
+		$menu_slug   = 'string-locator';
+		$function    = array( $this, 'options_page' );
+
+		add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, 'dashicons-edit' );
+	}
 
     /**
      * Function for including the actual plugin Admin UI page
@@ -342,78 +359,127 @@ class string_locator
 		}
 	}
 
-	function scan_path( $path, $string, $type, $slug ) {
-		$output = "";
+	/**
+	 * Scan through an individual file to look for occurrences of £string
+	 *
+	 * @param string $filename - The path to the file
+	 * @param string $string - The search string
+	 * @param mixed $location - The file location object/string
+	 * @param string $type - File type
+	 * @param string $slug - The plugin/theme slug of the file
+	 *
+	 * @return string
+	 */
+	function scan_file( $filename, $string, $location, $type, $slug ) {
+		$output = '';
+		$linenum = 0;
 
-		/**
-		 * We use the PHP Iterator class to recursively check for files
-		 */
-		$paths = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator( $path ),
-			RecursiveIteratorIterator::SELF_FIRST
-		);
+		if ( ! is_object( $location ) ) {
+			$path = $location;
+			$location = explode( DIRECTORY_SEPARATOR, $location );
+			$file = end( $location );
+		}
+		else {
+			$path = $location->getPathname();
+			$file = $location->getFilename();
+		}
 
-		foreach ( $paths AS $name => $location )
+		$readfile = fopen( $filename, "r" );
+		if ( $readfile )
 		{
-			$linenum = 0;
-
-			/**
-			 * If it's a directory, skip this run through, we can't read a directory line by line
-			 */
-			if ( is_dir( $location->getPathname() ) ) {
-				continue;
-			}
-
-			/**
-			 * Start reading the file
-			 */
-			$readfile = fopen( $location->getPathname(), "r" );
-			if ( $readfile )
+			while ( ( $readline = fgets( $readfile ) ) !== false )
 			{
-				while ( ( $readline = fgets( $readfile ) ) !== false )
+				$linenum++;
+				/**
+				 * If our string is found in this line, output the line number and other data
+				 */
+				if ( stristr( $readline, $string ) )
 				{
-					$linenum++;
 					/**
-					 * If our string is found in this line, output the line number and other data
+					 * Prepare the visual path for the end user
+					 * Removes path leading up to WordPress root and ensures consistent directory separators
 					 */
-					if ( stristr( $readline, $string ) )
-					{
-						/**
-						 * Prepare the visual path for the end user
-						 * Removes path leading up to WordPress root and ensures consistent directory separators
-						 */
-						$relativepath = str_replace( array( ABSPATH, '/' ), array( '', DIRECTORY_SEPARATOR ), $location->getPathname() );
+					$relativepath = str_replace( array( ABSPATH, '\\', '/' ), array( '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR ), $path );
 
-						/**
-						 * Create the URL to take the user to the editor
-						 */
-						$editurl = admin_url( 'tools.php?page=string-locator&file-type=' . $type . '&file-reference=' . urlencode( $slug ) . '&edit-file=' . $location->getFilename() . '&string-locator-line=' . $linenum . '&string-locator-path=' . urlencode( $location->getPathname() ) );
+					/**
+					 * Create the URL to take the user to the editor
+					 */
+					$editurl = admin_url( $this->path_to_use . '?page=string-locator&file-type=' . $type . '&file-reference=' . urlencode( $slug ) . '&edit-file=' . $file . '&string-locator-line=' . $linenum . '&string-locator-path=' . urlencode( $path ) );
 
-						$output .=  '
+					$output .=  '
                             <tr>
                                 <td>' . $linenum . '</td>
                                 <td>
-                                    <a href="' . $editurl . '">' . $relativepath . '</a>
+                                    <a href="' . esc_url( $editurl ) . '">' . esc_html( $relativepath ) . '</a>
                                 </td>
-                                <td>' . str_ireplace( $string, '<strong>' . $string . '</strong>', htmlentities( $readline ) ) . '</td>
+                                <td>' . str_ireplace( $string, '<strong>' . $string . '</strong>', esc_html( $readline ) ) . '</td>
                             </tr>
                         ';
-					}
 				}
 			}
-			else {
-				/**
-				 * The file was unreadable, give the user a friendly notification
-				 */
-				$output .= '
+		}
+		else {
+			/**
+			 * The file was unreadable, give the user a friendly notification
+			 */
+			$output .= '
                     <tr>
                         <td colspan="3">
                             <strong>
-                                ' . __( 'Could not read file: ', 'string-locator' ) . $location->getFilename() . '
+                                ' . esc_html( __( 'Could not read file: ', 'string-locator' ) . $file ) . '
                             </strong>
                         </td>
                     </tr>
                 ';
+		}
+
+		return $output;
+	}
+
+	/**
+	 * @param $path
+	 * @param $string
+	 * @param $type
+	 * @param $slug
+	 * @param bool $restore
+	 *
+	 * @return bool|mixed|string|void
+	 */
+	function scan_path( $path, $string, $type, $slug, $restore = false ) {
+		if ( $restore ) {
+			return get_option( 'string-locator-results', '' );
+		}
+		$output = "";
+
+		if ( is_file( $path ) ) {
+			/**
+			 * We're searching an individual file
+			 */
+			$output .= $this->scan_file( $path, $string, $path, $type, $slug );
+		}
+		else {
+			/**
+			 * We use the PHP Iterator class to recursively check for files
+			 */
+			$paths = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator( $path ),
+				RecursiveIteratorIterator::SELF_FIRST
+			);
+
+			foreach ( $paths AS $name => $location ) {
+				$linenum = 0;
+
+				/**
+				 * If it's a directory, skip this run through, we can't read a directory line by line
+				 */
+				if ( is_dir( $location->getPathname() ) ) {
+					continue;
+				}
+
+				/**
+				 * Start reading the file
+				 */
+				$output .= $this->scan_file( $location->getPathname(), $string, $location, $type, $slug );
 			}
 		}
 
@@ -422,6 +488,15 @@ class string_locator
 		}
 
 		return false;
+	}
+
+	/**
+	 * Force return the last searc hresult instead of doing a new search
+	 *
+	 * @return string|void
+	 */
+	function restore_scan_path() {
+		return $this->scan_path( '', '', '', '', true );
 	}
 }
 
