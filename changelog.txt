@@ -25,3 +25,6 @@
 * Screenshots and more plugin details added
 * Fixed column width for line number being way too large
 * Add missing inline comments/function references
+
+= 1.0.0 =
+* Initial release
