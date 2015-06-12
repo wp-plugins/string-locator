@@ -64,10 +64,6 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 * Added the ability to search recursively from the WordPress root
 * Updated textdomain (translations) to use the actual plugin slug
 
-
-= 1.0.0 =
-* Initial release
-
 == Upgrade notice ==
 
 Extended the search functionality
