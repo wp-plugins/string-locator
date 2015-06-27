@@ -4,153 +4,155 @@ msgid ""
 msgstr ""
 "Project-Id-Version: String Locator 1.1.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/string-locator\n"
-"POT-Creation-Date: 2015-06-12 11:49+0100\n"
-"PO-Revision-Date: 2015-06-12 11:49+0100\n"
+"POT-Creation-Date: 2015-06-27 22:37+0200\n"
+"PO-Revision-Date: 2015-06-27 22:37+0200\n"
 "Last-Translator: Borisa Djuraskovic <borisad@webhostinghub.com>\n"
 "Language-Team: \n"
 "Language: sr_RS\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.1\n"
+"X-Generator: Poedit 1.8.2\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: editor.php:67
+#: editor.php:68
 msgid "String Locator - Code Editor"
 msgstr ""
 
-#: editor.php:68
+#: editor.php:69
 msgid "Return to search results"
 msgstr ""
 
-#: editor.php:81
+#: editor.php:82
 msgid "By"
 msgstr ""
 
-#: editor.php:93
+#: editor.php:94
 msgid ""
 "Enable a smart-scan of your code to help detect bracket mismatches before "
 "saving."
 msgstr ""
 
-#: editor.php:109
+#: editor.php:110
 msgid "Save changes"
 msgstr ""
 
-#: editor.php:162
+#: editor.php:163
 msgid "WordPress Functions"
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-#: options.php:10 string-locator.php:181 string-locator.php:182
+#: options.php:12 string-locator.php:188 string-locator.php:189
+#: string-locator.php:200 string-locator.php:201
 msgid "String Locator"
 msgstr "String Locator"
 
-#: options.php:14
+#: options.php:16
 msgid "Search through"
 msgstr "Pretraga kroz"
 
-#: options.php:16
+#: options.php:18
 msgid "Core"
 msgstr ""
 
-#: options.php:17
-msgid "WordPress Core"
+#: options.php:19
+msgid "The whole WordPress directory"
 msgstr ""
 
-#: options.php:19
+#: options.php:21
 msgid "Themes"
 msgstr "Teme"
 
-#: options.php:20
+#: options.php:22
 msgid "All themes"
 msgstr ""
 
-#: options.php:35
+#: options.php:37
 msgid "Plugins"
 msgstr "Pluginovi"
 
-#: options.php:36
+#: options.php:38
 msgid "All plugins"
 msgstr ""
 
-#: options.php:52
+#: options.php:54
 msgid "Search string"
 msgstr "String pretrage"
 
-#: options.php:56
+#: options.php:58
 msgid "Search"
 msgstr "Pretraga"
 
-#: options.php:57
+#: options.php:59
 msgid "Restore last search"
 msgstr ""
 
-#: options.php:70 options.php:78
+#: options.php:72 options.php:80
 msgid "Line"
 msgstr "Rečenica"
 
-#: options.php:71 options.php:79
+#: options.php:73 options.php:81
 msgid "File"
 msgstr "Fajl"
 
-#: options.php:72 options.php:80
+#: options.php:74 options.php:82
 msgid "String"
 msgstr "String"
 
-#: options.php:187
+#: options.php:182
 msgid "Your string was not present in any of the available files."
 msgstr "Vaš string nije prisutan ni u jednom od fajlova."
 
-#: string-locator.php:256
+#: string-locator.php:274
 msgid ""
 "The file could not be written to, please check file permissions or edit it "
 "manually."
 msgstr ""
 
-#: string-locator.php:276
+#: string-locator.php:294
 #, php-format
 msgid ""
 "There is an inconsistency in the opening and closing braces, { and }, of your "
 "file on line %s"
 msgstr ""
 
-#: string-locator.php:291
+#: string-locator.php:309
 #, php-format
 msgid ""
 "There is an inconsistency in the opening and closing braces, [ and ], of your "
 "file on line %s"
 msgstr ""
 
-#: string-locator.php:306
+#: string-locator.php:324
 #, php-format
 msgid ""
 "There is an inconsistency in the opening and closing braces, ( and ), of your "
 "file on line %s"
 msgstr ""
 
-#: string-locator.php:324
+#: string-locator.php:352
+msgid ""
+"A 500 server error was detected on your site after updating your file. We "
+"have restored the previous version of the file for you."
+msgstr ""
+
+#: string-locator.php:358
 msgid "The file has been saved"
 msgstr ""
 
-#: string-locator.php:412
+#: string-locator.php:464
 msgid "Could not read file: "
 msgstr "Ne može da se učita fajl:"
 
-#. Plugin URI of the plugin/theme
-msgid "http://www.clorith.net/wordpress-string-locator/"
-msgstr ""
+#~ msgid "Scan through theme and plugin files looking for text strings"
+#~ msgstr ""
+#~ "Skeniranje kroz teme i plugin fajlove u potrazi za stringovima teksta."
 
-#. Description of the plugin/theme
-msgid "Scan through theme and plugin files looking for text strings"
-msgstr "Skeniranje kroz teme i plugin fajlove u potrazi za stringovima teksta."
-
-#. Author of the plugin/theme
-msgid "Clorith"
-msgstr "Clorith"
-
-#. Author URI of the plugin/theme
-msgid "http://www.clorith.net"
-msgstr ""
+#~ msgid "Clorith"
+#~ msgstr "Clorith"
 
 #~ msgid ""
 #~ "You recently searched for <strong>%s</strong> which was located on line "

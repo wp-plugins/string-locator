@@ -3,7 +3,7 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.clorith.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.5
+ * Version: 1.6
  * Author: Clorith
  * Author URI: http://www.clorith.net
  * Text Domain: string-locator
@@ -35,11 +35,12 @@ class string_locator
 	 * @var string $plugin_url The URL to the plugins directory
 	 */
 	public  $string_locator_language = '';
-	public  $version                 = '1.5';
+	public  $version                 = '1.6';
 	public  $notice                  = array();
 	public  $failed_edit             = false;
 	private $plugin_url              = '';
 	private $path_to_use             = '';
+	private $bad_http_codes          = array( '500' );
 
     /**
      * Construct the plugin
@@ -330,18 +331,57 @@ class string_locator
 					}
 				}
 
-				$file = fopen( $path, "w" );
-				$lines = explode( "\n", str_replace( array( "\r\n", "\r" ), "\n", $content ) );
-				for ( $i = 0; $i < count( $lines ); $i++ ) {
-					fwrite( $file, $lines[$i] . PHP_EOL );
+				$original = file_get_contents( $path );
+
+				$this->write_file( $path, $content );
+
+				/**
+				 * Check the status of the site after making out edits.
+				 * If the site fails, revert the changes to return the sites to its original state
+				 */
+				$header = wp_remote_head( site_url() );
+				if ( 301 == $header['response']['code'] ) {
+					$header = wp_remote_head( $header['headers']['location'] );
 				}
-				fclose( $file );
-				$this->notice[] = array(
-					'type'    => 'updated',
-					'message' => __( 'The file has been saved', 'string-locator' )
-				);
+
+				if ( in_array( $header['response']['code'], $this->bad_http_codes ) ) {
+					$this->write_file( $path, $original );
+
+					$this->notice[] = array(
+						'type'    => 'error',
+						'message' => __( 'A 500 server error was detected on your site after updating your file. We have restored the previous version of the file for you.', 'string-locator' )
+					);
+				}
+				else {
+					$this->notice[] = array(
+						'type'    => 'updated',
+						'message' => __( 'The file has been saved', 'string-locator' )
+					);
+				}
 			}
 		}
+	}
+
+	/**
+	 * When editing a file, this is where we write all the new content
+	 * We will break early if the user isn't allowed to edit files
+	 *
+	 * @param string $path - The path to the file
+	 * @param string $content - The content to write to the file
+	 */
+	private function write_file( $path, $content ) {
+		if ( ! current_user_can( 'edit_themes' ) ) {
+			return;
+		}
+
+		$file = fopen( $path, "w" );
+		$lines = explode( "\n", str_replace( array( "\r\n", "\r" ), "\n", $content ) );
+
+		for( $i = 0; $i < count( $lines ); $i++ ) {
+			fwrite( $file, $lines[ $i ] . PHP_EOL );
+		}
+
+		fclose( $file );
 	}
 
 	/**
@@ -491,7 +531,7 @@ class string_locator
 	}
 
 	/**
-	 * Force return the last searc hresult instead of doing a new search
+	 * Force return the last search result instead of doing a new search
 	 *
 	 * @return string|void
 	 */

@@ -6,7 +6,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: theme, plugin, text, search, find, editor, syntax, highlight
 Requires at least: 3.6
 Tested up to: 4.2
-Stable tag: 1.5
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,8 @@ You can then quickly make edits directly in your browser by clicking the link fr
 
 By default a Smart-Scan is enabled when making edits, this will look for inconsistencies with braces, brackets and parenthesis that are often accidentally left.
 This drastically reduces the risk of breaking your site when making edits, but is not an absolute guarantee.
+
+As of version 1.6 the plugin will check for errors on your site after making edits, and if any are detected, will revert to the previous version of your edited file.
 
 ** Translations**
 
@@ -41,6 +43,7 @@ Deutsch (German) - [pixolin](http://profiles.wordpress.org/pixolin/)
 = Will Smart-Scan guarantee my site is safe when making edits? =
 Although it will do it's best at detecting incorrect usage of the commonly used symbols (parenthesis, brackets and braces), there is no guarantee every possible error is detected. The best safe guard is to keep consistent backups of your site (even when not making edits).
 
+As of version 1.6, the plugin will check your site health after performing an edit. If the site is returning a site breaking error code, we'll revert to the previous version of the file.
 
 
 == Screenshots ==
@@ -51,6 +54,9 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 
 == Changelog ==
 
+= 1.6.0 =
+* Revert edits if site health degrades as a direct cause of said edit
+
 = 1.5.0 =
 * Return to your search results from the editor, or restore the previous search if you closed the page
 * Multisite support
@@ -59,11 +65,7 @@ Although it will do it's best at detecting incorrect usage of the commonly used 
 * Moved older changelog entries to changelog.txt
 * Updated translation files to use the correct text domain
 
-= 1.4.0 =
-* Added code references for WordPress function calls
-* Added the ability to search recursively from the WordPress root
-* Updated textdomain (translations) to use the actual plugin slug
 
 == Upgrade notice ==
 
-Extended the search functionality
+Improved how we detect site errors caused by file edits
