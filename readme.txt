@@ -5,8 +5,8 @@ Plugin URI: http://wordpress.org/plugins/string-locator/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6ARR8GWYHBVPN
 Tags: theme, plugin, text, search, find, editor, syntax, highlight
 Requires at least: 3.6
-Tested up to: 4.2
-Stable tag: 1.6
+Tested up to: 4.3
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,18 +54,16 @@ As of version 1.6, the plugin will check your site health after performing an ed
 
 == Changelog ==
 
+= 1.7.0 =
+* Tested with WordPress 4.3
+* Made it uses WordPress list tables (because they look nice and I felt adventurous)
+* If the preview text is really long, an excerpt is pulled instead of making a massive text blob
+* Fixed a typo in a query argument
+* Reordered the search result list based on priority
+
 = 1.6.0 =
 * Revert edits if site health degrades as a direct cause of said edit
 
-= 1.5.0 =
-* Return to your search results from the editor, or restore the previous search if you closed the page
-* Multisite support
-* Made marked text more prominent in the editor for readability
-* Fixed rare notice outputs when searching within all plugins/all themes
-* Moved older changelog entries to changelog.txt
-* Updated translation files to use the correct text domain
-
-
 == Upgrade notice ==
 
-Improved how we detect site errors caused by file edits
+4.3 compability update with other improvements, see the changelog for details
