@@ -59,146 +59,104 @@
 	        <a href="<?php echo esc_url( $this_url . '&restore=true' ); ?>" class="button button-primary"><?php _e( 'Restore last search', 'string-locator' ); ?></a>
         </p>
     </form>
-
     <?php
         if ( isset( $_POST['string-locator-search'] ) || isset( $_GET['restore'] ) )
         {
-    ?>
+            $found = array();
+            $path = ABSPATH . 'wp-content/';
 
-    <form action="" method="post">
-        <table class="wp-list-table widefat fixed">
-            <thead>
-                <tr>
-                    <th scope="col" style="width: 3.2em;"><?php _e( 'Line', 'string-locator' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'File', 'string-locator' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'String', 'string-locator' ); ?></th>
-                </tr>
-            </thead>
+            $table = new String_Locator_Table();
 
-            <tfoot>
-                <tr>
-                    <th scope="col" style=""><?php _e( 'Line', 'string-locator' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'File', 'string-locator' ); ?></th>
-                    <th scope="col" style=""><?php _e( 'String', 'string-locator' ); ?></th>
-                </tr>
-            </tfoot>
+            global $string_locator;
 
-            <tbody>
-            <?php
-                $found = '';
-                $path = ABSPATH . 'wp-content/';
+            $theme = false;
+            $plugin = false;
 
-                global $string_locator;
+            if ( isset( $_GET['restore'] ) ) {
+	            $found = $string_locator->restore_scan_path();
+            }
+            else {
+                if ( 3 == strlen( $_POST['string-locator-search'] ) && '-' == substr( $_POST['string-locator-search'], 2, 1 ) ) {
+	                /**
+	                 * We are doing a search of all themes or plugins
+	                 */
+	                if ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
+		                $path .= 'themes/';
 
-                $theme = false;
-                $plugin = false;
+		                foreach ( $string_locate_themes AS $string_locate_theme_slug => $string_locate_theme ) {
+			                $search = $string_locator->scan_path( $path . $string_locate_theme_slug, $_POST['string-locator-string'], 'theme', $string_locate_theme_slug );
 
-                if ( isset( $_GET['restore'] ) ) {
-		            $found = $string_locator->restore_scan_path();
-	            }
-                else {
-	                if ( 3 == strlen( $_POST['string-locator-search'] ) && '-' == substr( $_POST['string-locator-search'], 2, 1 ) ) {
-		                /**
-		                 * We are doing a search of all themes or plugins
-		                 */
-		                if ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
-			                $path .= 'themes/';
+                            if ( $search ) {
+	                            $found = array_merge( $found, array( array(
+		                            'header' => esc_html( $string_locate_theme )
+	                            ) ) );
 
-			                foreach ( $string_locate_themes AS $string_locate_theme_slug => $string_locate_theme ) {
-				                $locate = $string_locator->scan_path( $path . $string_locate_theme_slug, $_POST['string-locator-string'], 'theme', $string_locate_theme_slug );
-
-				                if ( $locate ) {
-					                $found .= '
-					                    <tr>
-					                        <td colspan="3">
-					                            <strong>
-					                                ' . ucfirst( $string_locate_theme ) . '
-				                                </strong>
-					                        </td>
-				                        </tr>
-					                ';
-
-					                $found .= $locate;
-				                }
-			                }
-		                } else {
-			                $path .= 'plugins/';
-
-			                foreach ( $string_locate_plugins AS $string_locate_plugin_path => $string_locate_plugin ) {
-				                $plugin = explode( '/', $string_locate_plugin_path );
-
-				                $locate = $string_locator->scan_path( $path . $plugin[0], $_POST['string-locator-string'], 'plugin', $plugin[0] );
-
-				                if ( $locate ) {
-					                $found .= '
-					                    <tr>
-					                        <td colspan="3">
-					                            <strong>
-					                                ' . ucfirst( $plugin[0] ) . '
-				                                </strong>
-					                        </td>
-				                        </tr>
-					                ';
-
-					                $found .= $locate;
-				                }
-			                }
+                                $found = array_merge( $found, $search );
+                            }
 		                }
 	                } else {
-		                /**
-		                 * We are searching through an individual item
-		                 */
+		                $path .= 'plugins/';
 
-		                /**
-		                 * Check what we are search through: WordPress core, a theme or a plugin
-		                 */
-		                if ( 'core' == $_POST['string-locator-search'] ) {
-			                $path = ABSPATH;
-			                $type = 'core';
-			                $slug = '';
-		                } elseif ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
-			                $theme = substr( $_POST['string-locator-search'], 2 );
-			                $path .= 'themes/' . $theme;
-			                $type = 'theme';
-			                $slug = $theme;
-		                } else {
-			                $plugin = explode( '/', substr( $_POST['string-locator-search'], 2 ) );
-			                $path .= 'plugins/' . $plugin[0];
-			                $type = 'plugin';
-			                $slug = $plugin[0];
+		                foreach ( $string_locate_plugins AS $string_locate_plugin_path => $string_locate_plugin ) {
+			                $plugin = explode( '/', $string_locate_plugin_path );
+
+                            $search = $string_locator->scan_path( $path . $plugin[0], $_POST['string-locator-string'], 'plugin', $plugin[0] );
+
+                            if ( $search ) {
+	                            $found = array_merge( $found, array( array(
+		                            'header' => esc_html( $plugin[0] )
+	                            ) ) );
+
+                                $found = array_merge( $found, $search );
+                            }
 		                }
-
-		                $found .= $string_locator->scan_path( $path, $_POST['string-locator-string'], $type, $slug );
 	                }
-                }
+                } else {
+	                /**
+	                 * We are searching through an individual item
+	                 */
 
-                /**
-                 * Give the user feedback if the string was not found anywhere
-                 */
-                if ( empty( $found ) ) {
-	                echo '
-                        <tr>
-                            <td colspan="3">
-                                ' . __( 'Your string was not present in any of the available files.', 'string-locator' ) . '
-                            </td>
-                        </tr>
-                    ';
-                }
-	            else {
-		            echo $found;
+	                /**
+	                 * Check what we are search through: WordPress core, a theme or a plugin
+	                 */
+	                if ( 'core' == $_POST['string-locator-search'] ) {
+		                $path = ABSPATH;
+		                $type = 'core';
+		                $slug = '';
+	                } elseif ( substr( $_POST['string-locator-search'], 0, 2 ) == 't-' ) {
+		                $theme = substr( $_POST['string-locator-search'], 2 );
+		                $path .= 'themes/' . $theme;
+		                $type = 'theme';
+		                $slug = $theme;
+	                } else {
+		                $plugin = explode( '/', substr( $_POST['string-locator-search'], 2 ) );
+		                $path .= 'plugins/' . $plugin[0];
+		                $type = 'plugin';
+		                $slug = $plugin[0];
+	                }
 
-		            if ( ! isset( $_GET['restore'] ) ) {
-			            error_log( 'Updating string results' );
-			            error_log( var_export( $found, true ) );
-			            update_option( 'string-locator-results', $found, false );
-		            }
+                    $search = $string_locator->scan_path( $path, $_POST['string-locator-string'], $type, $slug );
+
+                    if ( $search ) {
+                        $found = array_merge( $found, $search );
+                    }
+                }
+            }
+
+	        $table->set_items( $found );
+
+	        $table->prepare_items();
+
+            /**
+             * Give the user feedback if the string was not found anywhere
+             */
+            if ( $table->has_items() ) {
+	            if ( ! isset( $_GET['restore'] ) ) {
+		            update_option( 'string-locator-results', $found, false );
 	            }
-            ?>
-            </tbody>
-        </table>
-    </form>
+            }
 
-    <?php
+	        $table->display();
         }
     ?>
 </div>

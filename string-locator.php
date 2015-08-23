@@ -3,7 +3,7 @@
  * Plugin Name: String Locator
  * Plugin URI: http://www.clorith.net/wordpress-string-locator/
  * Description: Scan through theme and plugin files looking for text strings
- * Version: 1.6
+ * Version: 1.7
  * Author: Clorith
  * Author URI: http://www.clorith.net
  * Text Domain: string-locator
@@ -35,12 +35,13 @@ class string_locator
 	 * @var string $plugin_url The URL to the plugins directory
 	 */
 	public  $string_locator_language = '';
-	public  $version                 = '1.6';
+	public  $version                 = '1.7';
 	public  $notice                  = array();
 	public  $failed_edit             = false;
 	private $plugin_url              = '';
 	private $path_to_use             = '';
 	private $bad_http_codes          = array( '500' );
+	private $excerpt_length          = 25;
 
     /**
      * Construct the plugin
@@ -50,8 +51,9 @@ class string_locator
 		/**
 		 * Define class variables requiring expressions
 		 */
-		$this->plugin_url  = plugin_dir_url( __FILE__ );
-	    $this->path_to_use = ( is_multisite() ? 'network/admin.php' : 'tools.php' );
+		$this->plugin_url     = plugin_dir_url( __FILE__ );
+	    $this->path_to_use    = ( is_multisite() ? 'network/admin.php' : 'tools.php' );
+	    $this->excerpt_length = apply_filters( 'string_locator_excerpt_length', 25 );
 
 		add_action( 'admin_menu', array( $this, 'populate_menu' ) );
 	    add_action( 'network_admin_menu', array( $this, 'populate_network_menu' ) );
@@ -62,7 +64,17 @@ class string_locator
 
 		add_action( 'admin_init', array( $this, 'editor_save' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notice' ) );
+
+	    add_filter( 'list_table_primary_column', array( $this, 'wpdocs_slide_list_table_primary_column' ), 10, 2 );
     }
+
+	function wpdocs_slide_list_table_primary_column( $column, $screen ) {
+		if ( 'tools_page_string-locator' === $screen ) {
+			$column = 'stringresult';
+		}
+
+		return $column;
+	}
 
 	/**
 	 * Check if a file path is valid for editing
@@ -291,7 +303,10 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, { and }, of your file on line %s', 'string-locator' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
+								'message' => sprintf(
+									__( 'There is an inconsistency in the opening and closing braces, { and }, of your file on line %s', 'string-locator' ),
+									'<a href="#" class="string-locator-edit-goto" data-goto-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>'
+								)
 							);
 						}
 					}
@@ -306,7 +321,10 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, [ and ], of your file on line %s', 'string-locator' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
+								'message' => sprintf(
+									__( 'There is an inconsistency in the opening and closing braces, [ and ], of your file on line %s', 'string-locator' ),
+									'<a href="#" class="string-locator-edit-goto" data-goto-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>'
+								)
 							);
 						}
 					}
@@ -321,7 +339,10 @@ class string_locator
 						foreach( $opened AS $line ) {
 							$this->notice[] = array(
 								'type'    => 'error',
-								'message' => sprintf( __( 'There is an inconsistency in the opening and closing braces, ( and ), of your file on line %s', 'string-locator' ), '<a href="#" class="string-locator-edit-goto" data-gogo-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>' )
+								'message' => sprintf(
+									__( 'There is an inconsistency in the opening and closing braces, ( and ), of your file on line %s', 'string-locator' ),
+									'<a href="#" class="string-locator-edit-goto" data-goto-line="' . ( $line + 1 ). '">' . ( $line + 1 ) . '</a>'
+								)
 							);
 						}
 					}
@@ -345,6 +366,7 @@ class string_locator
 				}
 
 				if ( in_array( $header['response']['code'], $this->bad_http_codes ) ) {
+					$this->failed_edit = true;
 					$this->write_file( $path, $original );
 
 					$this->notice[] = array(
@@ -390,11 +412,11 @@ class string_locator
 	function admin_notice() {
 		if ( ! empty( $this->notice ) ) {
 			foreach( $this->notice AS $note ) {
-				echo '
-					<div class="' . $note['type'] . '">
-						<p>' . $note['message'] . '</p>
-					</div>
-				';
+				printf(
+					'<div class="%s"><p>%s</p></div>',
+					esc_attr( $note['type'] ),
+					esc_html( $note['message'] )
+				);
 			}
 		}
 	}
@@ -411,8 +433,12 @@ class string_locator
 	 * @return string
 	 */
 	function scan_file( $filename, $string, $location, $type, $slug ) {
-		$output = '';
+		if ( empty( $string ) ) {
+			return false;
+		}
+		$output = array();
 		$linenum = 0;
+		$match_count = 0;
 
 		if ( ! is_object( $location ) ) {
 			$path = $location;
@@ -429,6 +455,7 @@ class string_locator
 		{
 			while ( ( $readline = fgets( $readfile ) ) !== false )
 			{
+				$string_preview_is_cut = false;
 				$linenum++;
 				/**
 				 * If our string is found in this line, output the line number and other data
@@ -440,21 +467,53 @@ class string_locator
 					 * Removes path leading up to WordPress root and ensures consistent directory separators
 					 */
 					$relativepath = str_replace( array( ABSPATH, '\\', '/' ), array( '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR ), $path );
+					$match_count++;
 
 					/**
 					 * Create the URL to take the user to the editor
 					 */
 					$editurl = admin_url( $this->path_to_use . '?page=string-locator&file-type=' . $type . '&file-reference=' . urlencode( $slug ) . '&edit-file=' . $file . '&string-locator-line=' . $linenum . '&string-locator-path=' . urlencode( $path ) );
 
-					$output .=  '
-                            <tr>
-                                <td>' . $linenum . '</td>
-                                <td>
-                                    <a href="' . esc_url( $editurl ) . '">' . esc_html( $relativepath ) . '</a>
-                                </td>
-                                <td>' . str_ireplace( $string, '<strong>' . $string . '</strong>', esc_html( $readline ) ) . '</td>
-                            </tr>
-                        ';
+					$string_preview  = $readline;
+					if ( strlen( $string_preview ) > 100 ) {
+						$string_location = strpos( $string_preview, $string );
+
+						$string_location_start = $string_location - $this->excerpt_length;
+						if ( $string_location_start < 0 ) {
+							$string_location_start = 0;
+						}
+
+						$string_location_end = $string_location + strlen( $string ) + $this->excerpt_length;
+						if ( $string_location_end > strlen( $string_preview ) ) {
+							$string_location_end = strlen( $string_preview );
+						}
+
+						$string_preview = substr( $string_preview, $string_location_start, $string_location_end );
+						$string_preview_is_cut = true;
+					}
+
+					$string_preview = str_ireplace( $string, '<strong>' . $string . '</strong>', esc_html( $string_preview ) );
+					if ( $string_preview_is_cut ) {
+						$string_preview = sprintf(
+							'&hellip;%s&hellip;',
+							$string_preview
+						);
+					}
+
+					$path_string = sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( $editurl ),
+						esc_html( $relativepath )
+					);
+
+					$output[] = array(
+						'ID'           => $match_count,
+						'linenum'      => $linenum,
+						'filename'     => $path_string,
+						'filename_raw' => $relativepath,
+						'editurl'      => $editurl,
+						'stringresult' => $string_preview
+					);
 				}
 			}
 		}
@@ -462,16 +521,14 @@ class string_locator
 			/**
 			 * The file was unreadable, give the user a friendly notification
 			 */
-			$output .= '
-                    <tr>
-                        <td colspan="3">
-                            <strong>
-                                ' . esc_html( __( 'Could not read file: ', 'string-locator' ) . $file ) . '
-                            </strong>
-                        </td>
-                    </tr>
-                ';
+			$output[] = array(
+				'linenum'      => '#',
+				'filename'     => esc_html( __( 'Could not read file: ', 'string-locator' ) . $file ),
+				'stringresult' => ''
+			);
 		}
+
+		fclose( $readfile );
 
 		return $output;
 	}
@@ -489,13 +546,13 @@ class string_locator
 		if ( $restore ) {
 			return get_option( 'string-locator-results', '' );
 		}
-		$output = "";
+		$output = array();
 
 		if ( is_file( $path ) ) {
 			/**
 			 * We're searching an individual file
 			 */
-			$output .= $this->scan_file( $path, $string, $path, $type, $slug );
+			$output = array_merge( $output, $this->scan_file( $path, $string, $path, $type, $slug ) );
 		}
 		else {
 			/**
@@ -507,8 +564,6 @@ class string_locator
 			);
 
 			foreach ( $paths AS $name => $location ) {
-				$linenum = 0;
-
 				/**
 				 * If it's a directory, skip this run through, we can't read a directory line by line
 				 */
@@ -519,7 +574,7 @@ class string_locator
 				/**
 				 * Start reading the file
 				 */
-				$output .= $this->scan_file( $location->getPathname(), $string, $location, $type, $slug );
+				$output = array_merge( $output, $this->scan_file( $location->getPathname(), $string, $location, $type, $slug ) );
 			}
 		}
 
@@ -539,6 +594,8 @@ class string_locator
 		return $this->scan_path( '', '', '', '', true );
 	}
 }
+
+require_once( dirname( __FILE__ ) . '/table-controller.php' );
 
 /**
  * Instantiate the plugin

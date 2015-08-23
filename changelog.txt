@@ -1,3 +1,11 @@
+= 1.5.0 =
+* Return to your search results from the editor, or restore the previous search if you closed the page
+* Multisite support
+* Made marked text more prominent in the editor for readability
+* Fixed rare notice outputs when searching within all plugins/all themes
+* Moved older changelog entries to changelog.txt
+* Updated translation files to use the correct text domain
+
 = 1.4.0 =
 * Added code references for WordPress function calls
 * Added the ability to search recursively from the WordPress root
